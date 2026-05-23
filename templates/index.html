@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPredict AI - Intelligent Farming Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS Custom stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="glow-bg-1"></div>
+    <div class="glow-bg-2"></div>
+
+    <div class="app-container">
+        <!-- Sidebar/Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 22H22L12 2Z" fill="url(#logo-grad)" />
+                    <path d="M12 6L5 20H19L12 6Z" fill="#111" fill-opacity="0.3" />
+                    <circle cx="12" cy="14" r="3" fill="#10B981" />
+                    <defs>
+                        <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#34D399" />
+                            <stop offset="1" stop-color="#059669" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="logo-text">
+                    <h1>AgriPredict <span>AI</span></h1>
+                    <p>Intelligent Farming Engine</p>
+                </div>
+            </div>
+
+            <nav class="mode-selector">
+                <button class="nav-btn active" id="tab-crop" onclick="switchMode('crop')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>Crop Prediction</span>
+                </button>
+                <button class="nav-btn" id="tab-fertilizer" onclick="switchMode('fertilizer')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-icon"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                    <span>Fertilizer Guide</span>
+                </button>
+            </nav>
+
+            <div class="status-indicator">
+                <span class="pulse-dot"></span>
+                <span>AI Engine Connected</span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- HERO DESCRIPTION -->
+            <section class="hero-section">
+                <h2>Optimize Your Harvest with Machine Learning</h2>
+                <p>Maximize agricultural efficiency. Enter your soil composition, temperature, humidity, and atmospheric metrics to predict ideal crop choices and fertilizer configurations instantly.</p>
+            </section>
+
+            <!-- TWO PANELS FOR CROP & FERTILIZER -->
+            <div class="panels-container">
+                
+                <!-- CROP PANEL -->
+                <section class="card-panel active" id="panel-crop">
+                    <div class="panel-header">
+                        <h3>Crop Recommendation Form</h3>
+                        <p>Analyze atmospheric & soil properties to suggest the most lucrative crop.</p>
+                    </div>
+
+                    <form id="crop-form" onsubmit="submitCropForm(event)">
+                        <div class="form-grid">
+                            <!-- N -->
+                            <div class="form-group">
+                                <label for="crop-n">
+                                    <span>Nitrogen (N)</span>
+                                    <span class="value-badge" id="crop-n-badge">90</span>
+                                </label>
+                                <span class="help-text">Nutrient concentration in soil (ppm)</span>
+                                <input type="range" id="crop-n" name="N" min="0" max="150" value="90" oninput="updateBadge('crop-n', this.value)">
+                                <div class="slider-limits"><span>0</span><span>150 ppm</span></div>
+                            </div>
+
+                            <!-- P -->
+                            <div class="form-group">
+                                <label for="crop-p">
+                                    <span>Phosphorus (P)</span>
+                                    <span class="value-badge" id="crop-p-badge">42</span>
+                                </label>
+                                <span class="help-text">Phosphorus concentration (ppm)</span>
+                                <input type="range" id="crop-p" name="P" min="5" max="145" value="42" oninput="updateBadge('crop-p', this.value)">
+                                <div class="slider-limits"><span>5</span><span>145 ppm</span></div>
+                            </div>
+
+                            <!-- K -->
+                            <div class="form-group">
+                                <label for="crop-k">
+                                    <span>Potassium (K)</span>
+                                    <span class="value-badge" id="crop-k-badge">43</span>
+                                </label>
+                                <span class="help-text">Potassium concentration (ppm)</span>
+                                <input type="range" id="crop-k" name="K" min="5" max="205" value="43" oninput="updateBadge('crop-k', this.value)">
+                                <div class="slider-limits"><span>5</span><span>205 ppm</span></div>
+                            </div>
+
+                            <!-- pH -->
+                            <div class="form-group">
+                                <label for="crop-ph">
+                                    <span>Soil pH</span>
+                                    <span class="value-badge" id="crop-ph-badge">6.5</span>
+                                </label>
+                                <span class="help-text">Acidity / alkalinity of soil (0 - 14)</span>
+                                <input type="range" id="crop-ph" name="ph" min="3.5" max="9.0" step="0.1" value="6.5" oninput="updateBadge('crop-ph', this.value)">
+                                <div class="slider-limits"><span>3.5 (Acidic)</span><span>9.0 (Alkaline)</span></div>
+                            </div>
+
+                            <!-- Temperature -->
+                            <div class="form-group">
+                                <label for="crop-temp">
+                                    <span>Temperature</span>
+                                    <span class="value-badge" id="crop-temp-badge">24.5°C</span>
+                                </label>
+                                <span class="help-text">Local ambient temperature</span>
+                                <input type="range" id="crop-temp" name="temperature" min="8.0" max="45.0" step="0.5" value="24.5" oninput="updateBadge('crop-temp', this.value + '°C')">
+                                <div class="slider-limits"><span>8.0°C</span><span>45.0°C</span></div>
+                            </div>
+
+                            <!-- Humidity -->
+                            <div class="form-group">
+                                <label for="crop-humidity">
+                                    <span>Relative Humidity</span>
+                                    <span class="value-badge" id="crop-humidity-badge">82%</span>
+                                </label>
+                                <span class="help-text">Relative atmospheric humidity (%)</span>
+                                <input type="range" id="crop-humidity" name="humidity" min="15" max="100" value="82" oninput="updateBadge('crop-humidity', this.value + '%')">
+                                <div class="slider-limits"><span>15%</span><span>100%</span></div>
+                            </div>
+
+                            <!-- Rainfall -->
+                            <div class="form-group full-width">
+                                <label for="crop-rainfall">
+                                    <span>Average Rainfall</span>
+                                    <span class="value-badge" id="crop-rainfall-badge">202 mm</span>
+                                </label>
+                                <span class="help-text">Expected rainfall cycle (mm)</span>
+                                <input type="range" id="crop-rainfall" name="rainfall" min="20" max="300" value="202" oninput="updateBadge('crop-rainfall', this.value + ' mm')">
+                                <div class="slider-limits"><span>20 mm</span><span>300 mm</span></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn glowing-btn">
+                            <span>Analyze & Recommend Crop</span>
+                            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </form>
+                </section>
+
+                <!-- FERTILIZER PANEL -->
+                <section class="card-panel" id="panel-fertilizer">
+                    <div class="panel-header">
+                        <h3>Fertilizer Recommendation Form</h3>
+                        <p>Analyze specific soil moisture and NPK features to determine the ideal fertilizer feed.</p>
+                    </div>
+
+                    <form id="fertilizer-form" onsubmit="submitFertilizerForm(event)">
+                        <div class="form-grid">
+                            <!-- Soil Type (Select) -->
+                            <div class="form-group select-group">
+                                <label for="fert-soil">Soil Type</label>
+                                <span class="help-text">Dominant field structure</span>
+                                <div class="custom-select-wrapper">
+                                    <select id="fert-soil" name="soil_type" required>
+                                        <option value="Loamy" selected>Loamy</option>
+                                        <option value="Sandy">Sandy</option>
+                                        <option value="Black">Black</option>
+                                        <option value="Red">Red</option>
+                                        <option value="Clayey">Clayey</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Crop Type (Select) -->
+                            <div class="form-group select-group">
+                                <label for="fert-crop">Crop Cultivated</label>
+                                <span class="help-text">Target vegetation crop</span>
+                                <div class="custom-select-wrapper">
+                                    <select id="fert-crop" name="crop_type" required>
+                                        <option value="Wheat" selected>Wheat</option>
+                                        <option value="Maize">Maize</option>
+                                        <option value="Sugarcane">Sugarcane</option>
+                                        <option value="Cotton">Cotton</option>
+                                        <option value="Tobacco">Tobacco</option>
+                                        <option value="Paddy">Paddy</option>
+                                        <option value="Barley">Barley</option>
+                                        <option value="Millets">Millets</option>
+                                        <option value="Oil seeds">Oil seeds</option>
+                                        <option value="Pulses">Pulses</option>
+                                        <option value="Ground Nuts">Ground Nuts</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Temperature -->
+                            <div class="form-group">
+                                <label for="fert-temp">
+                                    <span>Temperature</span>
+                                    <span class="value-badge" id="fert-temp-badge">30°C</span>
+                                </label>
+                                <span class="help-text">Soil surrounding temperature</span>
+                                <input type="range" id="fert-temp" name="temperature" min="15" max="45" value="30" oninput="updateBadge('fert-temp', this.value + '°C')">
+                                <div class="slider-limits"><span>15°C</span><span>45°C</span></div>
+                            </div>
+
+                            <!-- Humidity -->
+                            <div class="form-group">
+                                <label for="fert-humidity">
+                                    <span>Humidity</span>
+                                    <span class="value-badge" id="fert-humidity-badge">60%</span>
+                                </label>
+                                <span class="help-text">Relative field air moisture</span>
+                                <input type="range" id="fert-humidity" name="humidity" min="20" max="90" value="60" oninput="updateBadge('fert-humidity', this.value + '%')">
+                                <div class="slider-limits"><span>20%</span><span>90%</span></div>
+                            </div>
+
+                            <!-- Soil Moisture -->
+                            <div class="form-group">
+                                <label for="fert-moisture">
+                                    <span>Soil Moisture</span>
+                                    <span class="value-badge" id="fert-moisture-badge">45%</span>
+                                </label>
+                                <span class="help-text">Ground moisture level</span>
+                                <input type="range" id="fert-moisture" name="moisture" min="10" max="80" value="45" oninput="updateBadge('fert-moisture', this.value + '%')">
+                                <div class="slider-limits"><span>10%</span><span>80%</span></div>
+                            </div>
+
+                            <!-- Nitrogen -->
+                            <div class="form-group">
+                                <label for="fert-n">
+                                    <span>Nitrogen (N)</span>
+                                    <span class="value-badge" id="fert-n-badge">15</span>
+                                </label>
+                                <span class="help-text">Available nitrogen (ppm)</span>
+                                <input type="range" id="fert-n" name="nitrogen" min="0" max="50" value="15" oninput="updateBadge('fert-n', this.value)">
+                                <div class="slider-limits"><span>0</span><span>50 ppm</span></div>
+                            </div>
+
+                            <!-- Potassium -->
+                            <div class="form-group">
+                                <label for="fert-k">
+                                    <span>Potassium (K)</span>
+                                    <span class="value-badge" id="fert-k-badge">4</span>
+                                </label>
+                                <span class="help-text">Available potassium (ppm)</span>
+                                <input type="range" id="fert-k" name="potassium" min="0" max="30" value="4" oninput="updateBadge('fert-k', this.value)">
+                                <div class="slider-limits"><span>0</span><span>30 ppm</span></div>
+                            </div>
+
+                            <!-- Phosphorus -->
+                            <div class="form-group">
+                                <label for="fert-p">
+                                    <span>Phosphorus (P)</span>
+                                    <span class="value-badge" id="fert-p-badge">18</span>
+                                </label>
+                                <span class="help-text">Available phosphorus (ppm)</span>
+                                <input type="range" id="fert-p" name="phosphorous" min="0" max="50" value="18" oninput="updateBadge('fert-p', this.value)">
+                                <div class="slider-limits"><span>0</span><span>50 ppm</span></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn glowing-btn">
+                            <span>Analyze & Recommend Fertilizer</span>
+                            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- PREDICTION RESULT PANEL -->
+            <section class="result-card glass-panel" id="prediction-result-card" style="display: none;">
+                <button class="close-result" onclick="hideResult()">&times;</button>
+                <div class="result-glow"></div>
+                <div class="result-content-layout">
+                    <div class="result-visual-area">
+                        <div class="gauge-outer">
+                            <div class="gauge-pulse"></div>
+                            <div class="result-badge-icon" id="result-icon-container">
+                                <!-- Dynamic SVG inserted by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="result-text-area">
+                        <span class="sub-heading">AGRIPREDICT ANALYSIS RESULT</span>
+                        <h4 id="result-title">Optimized Recommendation</h4>
+                        <div class="result-verdict" id="result-verdict">--</div>
+                        <p class="result-description" id="result-desc">Determining standard parameters...</p>
+                        
+                        <div class="metrics-summary" id="result-metrics">
+                            <!-- Dynamic key metric tags -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AGRI-INSIGHTS SECTION -->
+            <section class="insights-section">
+                <h3 class="section-title">Understanding soil chemistry & parameters</h3>
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon n-bg">N</div>
+                        <h4>Nitrogen (N)</h4>
+                        <p>Essential for vegetative leaf growth. Promotes lush green coloring and synthesis of vital plant proteins.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon p-bg">P</div>
+                        <h4>Phosphorus (P)</h4>
+                        <p>Critical for root network building and flower budding. Empowers the transfer of energy through cells.</p>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon k-bg">K</div>
+                        <h4>Potassium (K)</h4>
+                        <p>Drives plant disease resistance, cellular water regulation, and improves overall crop resilience.</p>
+                    </div>
+                    <div class="insight-card font-awesome-style">
+                        <div class="insight-icon ph-bg">pH</div>
+                        <h4>Soil pH Balance</h4>
+                        <p>Controls chemical solubility. A neutral range (6.0 - 7.0) typically provides the highest nutrient bioavailability.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RECENT HISTORY LOG -->
+            <section class="history-section glass-panel">
+                <div class="history-header">
+                    <h3>Recent Predictions Session Log</h3>
+                    <button class="clear-history-btn" onclick="clearHistory()">Clear History</button>
+                </div>
+                <div class="history-list" id="history-container">
+                    <div class="no-history-msg">No predictions recorded in this session. Submit a form to start.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
